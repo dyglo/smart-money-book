@@ -1,0 +1,1 @@
+export default function Home(){return <main className="foundation"><h1>Smart Money Book</h1><p>ICT trading tutorials, strategy guides, PDF books, and educational resources.</p><p>Our educational library is taking shape.</p></main>}
