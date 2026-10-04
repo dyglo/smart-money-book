@@ -25,16 +25,16 @@ export function Chart({
         role="img"
         aria-label={`${direction} reclaimed order block illustrative price chart`}
       >
-        <rect width="640" height="290" fill={cover ? "#faf5eb" : "#fff"} />
+        <rect width="640" height="290" fill={cover ? "#f5f5f6" : "#fff"} />
         {[50, 100, 150, 200, 250].map((y) => (
-          <line key={y} x1="35" y1={y} x2="615" y2={y} stroke="#e9e5df" />
+          <line key={y} x1="35" y1={y} x2="615" y2={y} stroke="#efeff0" />
         ))}
         <rect
           x="185"
           y="130"
           width="320"
           height="36"
-          fill="#f98d00"
+          fill="#fed415"
           opacity=".15"
         />
         <line
@@ -42,7 +42,7 @@ export function Chart({
           y1="130"
           x2="550"
           y2="130"
-          stroke="#db8915"
+          stroke="#a18800"
           strokeDasharray="5 4"
         />
         {values.map((v, i) => {
@@ -59,7 +59,7 @@ export function Chart({
                 y1={y - 16}
                 x2={50 + i * 25}
                 y2={y + 26}
-                stroke={green ? "#3d9c7e" : "#bc6057"}
+                stroke={green ? "#5fc756" : "#e14535"}
                 strokeWidth="2"
               />
               <rect
@@ -67,15 +67,15 @@ export function Chart({
                 y={Math.min(y, previous)}
                 width="14"
                 height={Math.max(Math.abs(y - previous), 8)}
-                fill={green ? "#3d9c7e" : "#bc6057"}
+                fill={green ? "#5fc756" : "#e14535"}
               />
             </g>
           );
         })}
-        <text x="360" y="121" fill="#965f15" fontSize="14">
+        <text x="360" y="121" fill="#665400" fontSize="14">
           Reclaimed order block
         </text>
-        <text x="36" y="280" fill="#666" fontSize="12">
+        <text x="36" y="280" fill="#707079" fontSize="12">
           ILLUSTRATIVE EXAMPLE · NOT LIVE MARKET DATA
         </text>
       </svg>

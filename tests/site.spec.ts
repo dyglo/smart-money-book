@@ -4,7 +4,7 @@ test("article, navigation, contents and preview discussion", async ({
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("/");
+  await page.goto("/tutorials/ict-reclaimed-order-block");
   await expect(page.getByRole("heading", { level: 1 })).toContainText(
     "ICT Reclaimed Order Block",
   );
@@ -104,4 +104,48 @@ test("all pages and header search work without overflow", async ({ page }) => {
   }
   const missing = await page.goto("/tutorials/missing");
   expect(missing?.status()).toBe(404);
+});
+
+test("home learning paths, toolkit downloads and shared design system", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Read price.Build your process.",
+  );
+  await page.evaluate(() => document.fonts.ready);
+  const theme = await page.evaluate(() => ({
+    primary: getComputedStyle(document.documentElement)
+      .getPropertyValue("--primary")
+      .trim(),
+    font: getComputedStyle(document.body).fontFamily,
+  }));
+  expect(theme.primary).toBe("#fed415");
+  expect(theme.font).toContain("urbanist");
+  for (const width of [360, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true);
+  }
+  await page
+    .getByRole("link", { name: "Explore the Tutorials", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/tutorials$/);
+  await page.goto("/");
+  await page
+    .getByRole("link", { name: "Get the checklist", exact: true })
+    .click();
+  await expect(page.getByRole("status")).toHaveText("1 resource found");
+  await page.goto("/");
+  const download = page.waitForEvent("download");
+  await page.locator(".toolkit-resource").first().click();
+  expect((await download).suggestedFilename()).toBe("ict-glossary.pdf");
+  await page.getByRole("link", { name: "Open reclaimed order block study", exact: false }).click();
+  await expect(page).toHaveURL(/ict-reclaimed-order-block$/);
+  expect(errors).toEqual([]);
 });

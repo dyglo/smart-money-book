@@ -1,4 +1,11 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
+const urbanist = localFont({
+  src: "./fonts/Urbanist-Variable.ttf",
+  variable: "--font-urbanist",
+  display: "swap",
+  weight: "100 900",
+});
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -13,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={urbanist.variable}>
       <body>
         <Header />
         {children}

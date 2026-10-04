@@ -11,21 +11,25 @@ export function Header() {
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <div className="announcement">
-        <div>
-          <span>
-            ✨ <strong>Update:</strong> Explore my ICT trading strategies and
-            PDF study books.
-          </span>
-          <Link className="button" href="/books">
-            Download Now
-          </Link>
-        </div>
-      </div>
       <header className="site-header">
         <div className="nav-inner">
           <Link className="brand" href="/" aria-label="Smart Money Book home">
-            <span className="brand-mark">S</span>
+            <span className="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M5 6h7l7 4v10l-7-4H5zM12 6v10M5 6v10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+                <path
+                  d="m5 6 7-3 7 3v4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                />
+              </svg>
+            </span>
             <span>
               Smart Money
               <br />
@@ -47,8 +51,15 @@ export function Header() {
               <Link
                 key={url}
                 href={url}
-                aria-current={path === url ? "page" : undefined}
-                onClick={() => setOpen(false)}
+                aria-current={
+                  (url === "/" ? path === url : path.startsWith(url))
+                    ? "page"
+                    : undefined
+                }
+                onClick={() => {
+                  setOpen(false);
+                  setSearch(false);
+                }}
               >
                 {label}
               </Link>
@@ -58,7 +69,10 @@ export function Header() {
             <button
               aria-label="Search resources"
               aria-expanded={search}
-              onClick={() => setSearch(!search)}
+              onClick={() => {
+                setSearch(!search);
+                setOpen(false);
+              }}
             >
               <svg
                 viewBox="0 0 24 24"
@@ -81,7 +95,10 @@ export function Header() {
               className="menu-toggle"
               aria-label="Toggle navigation"
               aria-expanded={open}
-              onClick={() => setOpen(!open)}
+              onClick={() => {
+                setOpen(!open);
+                setSearch(false);
+              }}
             >
               ☰
             </button>
