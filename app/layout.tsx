@@ -7,8 +7,8 @@ const urbanist = localFont({
   weight: "100 900",
 });
 import "./globals.css";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
+import { SiteChrome } from "@/components/site-chrome";
+import { WorkspaceProvider } from "@/components/workspace-provider";
 export const metadata: Metadata = {
   title: { default: "Smart Money Book", template: "%s | Smart Money Book" },
   description:
@@ -22,9 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={urbanist.variable}>
       <body>
-        <Header />
-        {children}
-        <Footer />
+        <WorkspaceProvider>
+          <SiteChrome>{children}</SiteChrome>
+        </WorkspaceProvider>
       </body>
     </html>
   );

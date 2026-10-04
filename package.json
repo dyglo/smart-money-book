@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test"
+    "test": "playwright test",
+    "prebuild": "node scripts/setup-pdf-worker.mjs",
+    "predev": "node scripts/setup-pdf-worker.mjs",
+    "postinstall": "node scripts/setup-pdf-worker.mjs"
   },
   "repository": {
     "type": "git",
@@ -22,7 +25,19 @@
   },
   "homepage": "https://github.com/dyglo/smart-money-book#readme",
   "dependencies": {
+    "@tiptap/extension-highlight": "^3.31.4",
+    "@tiptap/extension-image": "^3.31.4",
+    "@tiptap/extension-placeholder": "^3.31.4",
+    "@tiptap/extension-table": "^3.31.4",
+    "@tiptap/extension-text-align": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/react": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "dompurify": "^3.4.16",
+    "idb": "^8.0.3",
+    "lucide-react": "^1.52.0",
     "next": "^16.3.8",
+    "pdfjs-dist": "^6.4.299",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
