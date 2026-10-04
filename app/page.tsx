@@ -1,1 +1,3 @@
-export default function Home(){return <main className="foundation"><h1>Smart Money Book</h1><p>ICT trading tutorials, strategy guides, PDF books, and educational resources.</p><p>Our educational library is taking shape.</p></main>}
+import {articles} from '@/lib/content';
+import {ArticleView} from '@/components/article';
+export default function Home(){return <ArticleView article={articles[0]}/>}
