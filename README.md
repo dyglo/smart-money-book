@@ -1,21 +1,45 @@
 # Smart Money Book
 
-A web app for sharing trading strategies, lessons, and educational resources inspired by ICT and smart money concepts.
+A Next.js web app for sharing ICT trading strategies, PDF books, tutorials, and educational resources. The first version uses mock content only.
 
-## Planned features
+## Run on your PC or in the cloud
 
-- Trading strategy posts and chart examples
-- Educational lessons and market insights
-- Downloadable trading resources
+Requires Node.js 20.9 or later.
 
-## Project status
+```bash
+git clone https://github.com/dyglo/smart-money-book.git
+cd smart-money-book
+npm ci
+npm run dev
+```
 
-Initial setup. The web app is coming soon.
+Open http://localhost:3000. For a production version, run `npm run build` followed by `npm run start`.
 
-## Access from any device
+## Included
 
-This repository stores the project code so development can continue from a phone or PC.
+- Reference-style article pages with a contents list, chart diagrams, FAQs, related lessons, and a resource sidebar.
+- Tutorial, blog, market structure, PDF book, and resource pages.
+- Resource search and category filtering, downloadable sample PDFs, and mobile navigation.
+- Browser-only preview comments. They disappear on refresh; no backend, accounts, or persistent submissions are configured.
+
+Mock records are in `lib/content.ts`. Replace PDFs in `public/pdfs/` with your own files. Sample PDFs contain one page of preview material; they are not finished books. `scripts/generate-sample-pdfs.mjs` regenerates the samples.
+
+The inspected reference and design measurements are documented in `docs/design-reference.md`. Smart Money Book uses its own branding, mock copy, and illustrative charts.
+
+## Checks
+
+```bash
+npm run build
+npm run typecheck
+npm test
+```
+
+Browser tests cover desktop and phone layouts, navigation, resource searches, PDF downloads, and preview discussions. In this cloud environment they use `/usr/bin/chromium`. On another machine, update `playwright.config.ts` to remove `executablePath`, then run `npx playwright install chromium`.
+
+## Project stages
+
+Each completed stage is validated and saved to GitHub separately: Next.js foundation, article experience, resource library, and browser verification/documentation.
 
 ## Disclaimer
 
-Content is for educational purposes only and is not financial advice. Trading involves risk.
+Educational content only. Trading involves risk and these resources are not financial advice. Smart Money Book is an independent project, not affiliated with ICT or the reference website.
