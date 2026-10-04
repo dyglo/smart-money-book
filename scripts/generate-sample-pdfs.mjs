@@ -1,7 +1,58 @@
-import fs from 'node:fs';
-const files={'smart-money-playbook':'Smart Money Trading Playbook','ict-glossary':'ICT Trading Glossary','trade-checklist':'Pre-Trade Checklist','trading-journal':'Trading Journal Worksheet','ict-reclaimed-order-block':'ICT Reclaimed Order Block','fair-value-gap':'ICT Fair Value Gap','liquidity-sweep':'Liquidity Sweeps'};
-for(const [slug,title] of Object.entries(files)){
-const lines=[title,'SMART MONEY BOOK - SAMPLE STUDY RESOURCE','','This is a mock PDF for the initial website preview.','Replace this sample with your own published book or strategy.','','Study checklist:','1. Identify the higher-timeframe narrative.','2. Mark relevant liquidity and price zones.','3. Wait for your predefined confirmation.','4. Define invalidation and a fixed risk budget.','5. Journal the outcome and review failed examples.','','Educational material only. Trading involves risk.'];
-const stream='BT /F1 18 Tf 50 780 Td '+lines.map((s,i)=>`${i?'0 -32 Td ':''}${i===1?'/F1 12 Tf ':''}(${s.replace(/[\\()]/g,'\\$&')}) Tj`).join('\n')+' ET';
-const objects=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',`<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`];let pdf='%PDF-1.4\n';const offsets=[0];objects.forEach((o,i)=>{offsets.push(Buffer.byteLength(pdf));pdf+=`${i+1} 0 obj\n${o}\nendobj\n`});const xref=Buffer.byteLength(pdf);pdf+=`xref\n0 6\n0000000000 65535 f \n${offsets.slice(1).map(o=>String(o).padStart(10,'0')+' 00000 n ').join('\n')}\ntrailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;fs.writeFileSync(`public/pdfs/${slug}.pdf`,pdf);
+import fs from "node:fs";
+const files = {
+  "smart-money-playbook": "Smart Money Trading Playbook",
+  "ict-glossary": "ICT Trading Glossary",
+  "trade-checklist": "Pre-Trade Checklist",
+  "trading-journal": "Trading Journal Worksheet",
+  "ict-reclaimed-order-block": "ICT Reclaimed Order Block",
+  "fair-value-gap": "ICT Fair Value Gap",
+  "liquidity-sweep": "Liquidity Sweeps",
+};
+for (const [slug, title] of Object.entries(files)) {
+  const lines = [
+    title,
+    "SMART MONEY BOOK - SAMPLE STUDY RESOURCE",
+    "",
+    "This is a mock PDF for the initial website preview.",
+    "Replace this sample with your own published book or strategy.",
+    "",
+    "Study checklist:",
+    "1. Identify the higher-timeframe narrative.",
+    "2. Mark relevant liquidity and price zones.",
+    "3. Wait for your predefined confirmation.",
+    "4. Define invalidation and a fixed risk budget.",
+    "5. Journal the outcome and review failed examples.",
+    "",
+    "Educational material only. Trading involves risk.",
+  ];
+  const stream =
+    "BT /F1 18 Tf 50 780 Td " +
+    lines
+      .map(
+        (s, i) =>
+          `${i ? "0 -32 Td " : ""}${i === 1 ? "/F1 12 Tf " : ""}(${s.replace(/[\\()]/g, "\\$&")}) Tj`,
+      )
+      .join("\n") +
+    " ET";
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    `<< /Length ${Buffer.byteLength(stream)} >>\nstream\n${stream}\nendstream`,
+  ];
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((o, i) => {
+    offsets.push(Buffer.byteLength(pdf));
+    pdf += `${i + 1} 0 obj\n${o}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(pdf);
+  pdf += `xref\n0 6\n0000000000 65535 f \n${offsets
+    .slice(1)
+    .map((o) => String(o).padStart(10, "0") + " 00000 n ")
+    .join(
+      "\n",
+    )}\ntrailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  fs.writeFileSync(`public/pdfs/${slug}.pdf`, pdf);
 }
