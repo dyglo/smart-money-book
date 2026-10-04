@@ -17,3 +17,9 @@ PDFs are one-page mock study resources. Comment previews exist only in component
 ## Home page redesign
 
 Production build and TypeScript passed. Eight browser tests passed after adding home-page checks for tutorial navigation, checklist search, toolkit downloads, shared palette, and Urbanist font loading. Overflow checked at widths 360, 768, 1024, and 1440. Desktop and phone screenshots inspected; browser reported no errors or framework overlay.
+
+## Admin workspace
+
+Production build, TypeScript, and all 18 browser tests passed for the completed admin release. Desktop and phone verification covers mock login/signup, protected-route redirects, sidebar collapse and drawer navigation, rich text formatting, headings, tables, inline/cover images, undo/redo, draft persistence, Blog/Tutorial publication, public previews, editing, unpublishing, unsaved navigation, PDF text/image import, scanned-page notices, clipboard image paste, resource upload/download/hide/show/delete, and existing public-site behavior. Admin layouts fit 360, 768, 1024, and 1440 pixel widths. Login, dashboard, and editor screenshots were inspected.
+
+Visitor and per-post view figures remain sample analytics. Accounts and publishing are device-local mock behavior; see `docs/admin-workspace.md` for the backend boundary and PDF conversion limits.

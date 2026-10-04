@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { articles } from "@/lib/content";
-import { ArticleView } from "@/components/article";
+import { SeedPost } from "@/components/published-post";
 export function generateStaticParams() {
   return articles.map((a) => ({ slug: a.slug }));
 }
@@ -24,5 +24,5 @@ export default async function Tutorial({
   const { slug } = await params;
   const a = articles.find((a) => a.slug === slug);
   if (!a) notFound();
-  return <ArticleView article={a} />;
+  return <SeedPost article={a} />;
 }

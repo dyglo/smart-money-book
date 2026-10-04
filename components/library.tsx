@@ -1,7 +1,9 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { resources, articles } from "@/lib/content";
+import { useWorkspace } from "./workspace-provider";
+import { ResourceDownload } from "./resource-download";
+import { postURL } from "@/lib/workspace";
 export function Library({
   booksOnly = false,
   initialQuery = "",
@@ -9,6 +11,9 @@ export function Library({
   booksOnly?: boolean;
   initialQuery?: string;
 }) {
+  const { data } = useWorkspace();
+  const resources = data.resources.filter((r) => r.published);
+  const articles = data.posts.filter((p) => p.status === "published");
   const [query, setQuery] = useState(initialQuery);
   const [category, setCategory] = useState("All");
   const filtered = resources.filter(
@@ -69,24 +74,24 @@ export function Library({
               <small>ICT EDUCATIONAL SERIES</small>
             </div>
             <div className="resource-card-content">
-              <span className="category-label">{r.category} · Sample PDF</span>
+              <span className="category-label">
+                {r.category} · {r.file ? "PDF" : "Sample PDF"}
+              </span>
               <h2>{r.title}</h2>
               <p>{r.description}</p>
-              <a className="button" href={`/pdfs/${r.slug}.pdf`} download>
-                Download PDF
-              </a>
+              <ResourceDownload resource={r} />
             </div>
           </article>
         ))}
         {lessons.map((a) => (
-          <article key={a.slug} className="resource-card lesson-card">
+          <article key={a.id} className="resource-card lesson-card">
             <div className="resource-card-content">
               <span className="category-label">
-                {a.category} · {a.readTime}
+                {a.kind === "blog" ? "Blog" : "Tutorial"}
               </span>
               <h2>{a.title}</h2>
               <p>{a.description}</p>
-              <Link className="text-link" href={`/tutorials/${a.slug}`}>
+              <Link className="text-link" href={postURL(a)}>
                 Read Tutorial
               </Link>
             </div>

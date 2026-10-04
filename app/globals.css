@@ -2017,3 +2017,61 @@ h3 {
     font-size: 30px;
   }
 }
+.published-cover {
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+.rich-article {
+  overflow-wrap: anywhere;
+}
+.rich-article img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 7px;
+  margin: 20px 0;
+}
+.rich-article h1 {
+  font-size: 32px;
+  margin: 28px 0 18px;
+}
+.rich-article h2 {
+  font-size: 25px;
+  margin: 26px 0 16px;
+}
+.rich-article h3 {
+  font-size: 21px;
+  margin: 20px 0 14px;
+}
+.rich-article table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 20px 0;
+}
+.rich-article td,
+.rich-article th {
+  border: 1px solid #d7d7de;
+  padding: 9px;
+  overflow-wrap: anywhere;
+  vertical-align: top;
+}
+.rich-article th {
+  background: #f5f5f6;
+}
+.rich-article blockquote {
+  border-left: 3px solid var(--primary);
+  padding: 8px 20px;
+  margin: 20px 0;
+  background: #fffbe7;
+}
+.rich-article mark {
+  background: var(--primary);
+}
+.rich-article .tableWrapper {
+  overflow-x: auto;
+}

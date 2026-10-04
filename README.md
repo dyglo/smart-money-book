@@ -4,7 +4,7 @@ A Next.js web app for sharing ICT trading strategies, PDF books, tutorials, and 
 
 ## Run on your PC or in the cloud
 
-Requires Node.js 20.9 or later.
+Requires Node.js 22.13 or later (Node.js 24 recommended).
 
 ```bash
 git clone https://github.com/dyglo/smart-money-book.git
@@ -51,3 +51,16 @@ Educational content only. Trading involves risk and these resources are not fina
 https://smart-money-book.vercel.app
 
 Vercel deploys automatically when the connected repository changes on `main`. Build and run browser checks before publishing changes.
+
+## Admin workspace (demo)
+
+Open `/admin/login` or `/login`, or create a device-local demo account at `/admin/sign-up`.
+
+- Email: `admin@smartmoneybook.demo`
+- Password: `SmartMoney2026!`
+
+The admin dashboard includes an overview, collapsible sidebar, a Word-style rich editor, PDF-to-draft import, and PDF resource management. Published previews appear in the blog/tutorial indexes and resource library in the same browser. Drafts, uploaded images, and PDFs are stored locally in IndexedDB.
+
+This is mock authentication and device-local publishing. Content does not synchronize to other visitors or devices; secure access, shared storage, and real visitor analytics require the later backend.
+
+PDF import extracts text and supported embedded images from up to 20 pages of PDFs smaller than 15 MB. Scanned PDFs become page images; OCR is not included. Review formatting and image placement before publishing. Full workflow details: `docs/admin-workspace.md`.
