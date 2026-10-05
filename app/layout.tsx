@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import localFont from "next/font/local";
 const urbanist = localFont({
   src: "./fonts/Urbanist-Variable.ttf",
@@ -9,6 +10,7 @@ const urbanist = localFont({
 import "./globals.css";
 import { SiteChrome } from "@/components/site-chrome";
 import { WorkspaceProvider } from "@/components/workspace-provider";
+import { VisitorTracker } from "@/components/visitor-tracker";
 import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: { default: "Smart Money Book", template: "%s | Smart Money Book" },
@@ -25,6 +27,7 @@ export default function RootLayout({
       <body>
         <WorkspaceProvider>
           <SiteChrome>{children}</SiteChrome>
+          <Suspense fallback={null}><VisitorTracker /></Suspense>
         </WorkspaceProvider>
         <Analytics />
       </body>

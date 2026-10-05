@@ -2,7 +2,7 @@
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
-import { adminSession, loadWorkspace, writePost, writeResource, emptyAnalytics, ADMIN_EMAIL, visitorId, type AdminSession, type Analytics } from "@/lib/backend";
+import { adminSession, loadWorkspace, writePost, writeResource, emptyAnalytics, ADMIN_EMAIL, loadAnalytics, type AdminSession, type Analytics } from "@/lib/backend";
 import type { Workspace, ManagedPost, ManagedResource } from "@/lib/workspace";
 
 type Context = {
@@ -58,14 +58,35 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
   useEffect(() => {
     void refresh();
-    if (!path.startsWith("/admin")) {
-      try { void supabase().rpc("record_visit", { p_visitor: visitorId(), p_path: path }); } catch { /* Analytics must not block reading. */ }
-    }
+
   }, [path, refresh]);
+  useEffect(() => {
+    if (!session || path !== "/admin/dashboard") return;
+    let active = true;
+    let loading = false;
+    const updateMetrics = async () => {
+      if (loading || document.visibilityState === "hidden") return;
+      loading = true;
+      try {
+        const stats = await loadAnalytics();
+        if (active) {
+          setAnalytics(stats);
+          setData(current => ({ ...current, posts: current.posts.map(post => ({ ...post, views: stats.views[post.id] ?? 0 })) }));
+          setError("");
+        }
+      } catch (e) {
+        if (active) setError(e instanceof Error ? e.message : "Unable to refresh visitor metrics.");
+      } finally { loading = false; }
+    };
+    const interval = setInterval(() => void updateMetrics(), 15000);
+    document.addEventListener("visibilitychange", updateMetrics);
+    return () => { active = false; clearInterval(interval); document.removeEventListener("visibilitychange", updateMetrics); };
+  }, [session?.id, path]);
   async function signOut() {
     const { error } = await supabase().auth.signOut();
     if (error) throw error;
     setSession(null);
+    setAnalytics(emptyAnalytics);
     // Immediately discard cached drafts and hidden resources.
     setData({ posts: [], resources: [] });
     await refresh();

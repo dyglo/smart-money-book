@@ -33,7 +33,7 @@ The existing editor supports rich text, tables, inline/cover images, drafts, pub
 
 Tutorials, blog lists, the homepage, resource search, and sidebar read shared live content. Drafts and hidden resources are visible only to the approved administrator. Both storage buckets are private; published media can be downloaded through signed URLs. Comments persist in Supabase.
 
-Dashboard visitors measure distinct browser IDs over seven days in Africa/Nairobi time. Content views count a browser/post/path once per day. These are first-party visit measurements rather than audited unique people.
+Dashboard visitors measure distinct browser IDs over seven days in Africa/Nairobi time. Content views count each rendered published-post navigation, including reloads. Retries of the same event count once. The open dashboard refreshes metrics every 15 seconds. These are first-party visit measurements rather than audited unique people.
 
 ## Database and verification
 

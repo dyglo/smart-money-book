@@ -45,7 +45,7 @@ Both `images` and `resources` buckets are private. Saving uploads new images/PDF
 
 Comments are public on published posts only. The submission RPC validates lengths and applies a 30-second browser-ID cooldown. This is basic abuse control; the browser identifier can be reset and is not a strong identity.
 
-Dashboard analytics store browser/day/path visits in the private schema; only the approved admin can read aggregates. Metrics use Africa/Nairobi dates. A browser/post/path is counted once daily; multiple people/devices and blocked local storage affect the counts.
+Dashboard analytics store navigation events in `private.page_view_events`; only the approved admin can read aggregates. Metrics use Africa/Nairobi dates. Every published-post navigation or reload adds one content view, while the event UUID prevents retries and effect replays from adding duplicates. Unique visitors use a persistent browser ID, counted distinctly over the seven-day period and per chart day. A memory fallback still records views when local storage is blocked, though those visitors cannot be recognized across reloads. Admin routes, login pages, invalid routes, and draft posts are excluded. Query-only navigation between blog posts is tracked correctly. The dashboard refreshes aggregates and per-post view counts every 15 seconds while visible. Counts of blog posts, tutorials, and drafts continue to come directly from live content. Legacy daily-deduplicated visits are retained in aggregates for compatibility.
 
 ## PDF import
 

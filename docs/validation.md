@@ -1,15 +1,14 @@
-# Backend validation — October 5, 2026
+# Backend and analytics validation — October 5, 2026
 
 - Production build and TypeScript pass.
-- Supabase security and performance advisors return no findings.
-- Live database transaction tests pass: restricted email, atomic single signup, permanent lock after deletion, approval, immediate revocation, public/draft visibility, post/resource CRUD, persistent comments, and daily visit deduplication.
-- Storage transaction tests pass: approved-admin file writes, public published-file reads, hidden PDFs and draft-image isolation, denial after unpublishing, and blocked anonymous uploads.
-- Desktop and mobile browser suite: **16 passed, 2 skipped**. Verified navigation/layout, unknown tutorial 404, admin redirects, rejected demo credentials, disallowed signup email, shared published database content, and comments surviving refresh and appearing in independent browser contexts.
-- Both skipped cases require the owner-created, verified, approved admin account. Actual successful email delivery/sign-in with that account and full admin browser publishing/upload flows remain to be exercised after registration. Database authorization and CRUD were verified using rolled-back Auth fixtures without consuming the one-time account slot.
-- Agent-browser checked the rendered homepage, login, and a temporary live tutorial; no browser page errors were reported.
-- All temporary content and transaction-created accounts/files were removed or rolled back. The admin slot remains unclaimed, and the live library contains no seeded sample content.
-- Local Supabase public environment variables and Vercel production/preview/development environment variables are configured. Production deployment is triggered by pushing the validated changes to main.
+- Desktop/mobile browser suite: **22 passed, 4 skipped**. Covered auth-note removal, public routes, unauthorized access, rejected credentials/email, successful live visitor requests, repeat views with distinct event IDs, same-browser identity reuse, query-only navigation between blog posts, and tracking with blocked local storage.
+- The skipped tests require optional owner credentials or a separate published discussion fixture. No password from screenshots was used to authenticate or stored in this repository.
+- Ten observed browser event IDs were matched to persisted Supabase rows. The approved-admin aggregate RPC reported real totals from those events, including per-post counts and the seven-day visitor chart.
+- `supabase/tests/analytics.sql` passes inside a rolled-back transaction: retry idempotency, repeat page views, distinct visitors, draft/admin/invalid-route exclusion, and dashboard aggregates. It uses the existing approved administrator for read authorization without changing the account.
+- Original signup/RLS/CRUD and Storage transaction tests passed in the initial backend integration. The original signup tests are intended only for an unclaimed account slot; the real administrator is now registered and approved.
+- All analytics-test posts and predeployment test events are removed after verification so production starts collecting real traffic.
+- The dashboard polls metrics every 15 seconds while visible. Blog/tutorial/draft counts come from live content; total and individual post views come from private event aggregates.
 
-Tests are in `tests/` and `supabase/tests/`. Use `SMB_TEST_PUBLIC_SLUG` for a temporary published browser fixture and `SMB_TEST_ADMIN_PASSWORD` after the real administrator has been onboarded. SQL tests must be run only before the signup slot is claimed; they roll back all database changes. Storage tests verify metadata authorization, not the binary Storage upload service.
+Tracking begins with this release. Earlier visitors cannot be reconstructed because the previous client requests were not executed. Unique visitors identify browsers rather than people; local-storage blocking limits recognition across reloads. Events are recorded after JavaScript runs, so blocked JavaScript and bots that do not run it are excluded. No visitor IP addresses or personal identity are collected.
 
-See `docs/admin-workspace.md` for owner approval, Auth URL configuration, file URL lifetime, PDF import limits, and metric definitions.
+See `docs/admin-workspace.md` for the data flow and metric definitions.

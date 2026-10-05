@@ -27,7 +27,7 @@ export function Overview() {
       (filter === "all" || p.status === filter) &&
       p.title.toLowerCase().includes(query.toLowerCase()),
   );
-  const views = data.posts.reduce((n, p) => n + p.views, 0);
+  const views = analytics.contentViews;
   return (
     <AdminShell title="Overview">
       <div className="admin-page-heading">

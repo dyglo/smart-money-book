@@ -1,13 +1,11 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import DOMPurify from "dompurify";
 import Link from "next/link";
 import Image from "next/image";
 import { useWorkspace } from "./workspace-provider";
 import { Sidebar } from "./sidebar";
 import { ShareButtons, Comments } from "./interactions";
-import { supabase } from "@/lib/supabase";
-import { visitorId } from "@/lib/backend";
 export function TutorialPost({ slug }: { slug: string }) {
   const { data, ready } = useWorkspace();
   if (!ready) return <div className="foundation" role="status">Opening lesson…</div>;
@@ -15,16 +13,7 @@ export function TutorialPost({ slug }: { slug: string }) {
   return post ? <RichPost id={post.id} /> : <MissingPost />;
 }
 export function PublishedPost() {
-  const [id, setId] = useState<string | null>(null);
-  useEffect(() => {
-    setId(new URLSearchParams(location.search).get("id") ?? "");
-  }, []);
-  if (id === null)
-    return (
-      <div className="foundation" role="status">
-        Opening post…
-      </div>
-    );
+  const id = useSearchParams().get("id") ?? "";
   return <RichPost id={id} />;
 }
 function MissingPost() {
@@ -42,10 +31,6 @@ function MissingPost() {
 function RichPost({ id }: { id: string }) {
   const { data, ready, session } = useWorkspace();
   const post = data.posts.find((p) => p.id === id);
-  useEffect(() => {
-    if (post?.status !== "published") return;
-    try { void supabase().rpc("record_visit", { p_visitor: visitorId(), p_path: location.pathname + location.search, p_post_id: id }); } catch { /* Reading works without analytics storage. */ }
-  }, [id, post?.status]);
   if (!ready)
     return (
       <div className="foundation" role="status">

@@ -1,8 +1,8 @@
 import { supabase } from "./supabase";
 import type { ManagedPost, ManagedResource, Workspace } from "./workspace";
 
-export type Analytics = { visitors: number; daily: { day: string; visitors: number }[]; views: Record<string, number> };
-export const emptyAnalytics: Analytics = { visitors: 0, daily: [], views: {} };
+export type Analytics = { visitors: number; pageViews: number; contentViews: number; daily: { day: string; visitors: number }[]; views: Record<string, number> };
+export const emptyAnalytics: Analytics = { visitors: 0, pageViews: 0, contentViews: 0, daily: [], views: {} };
 export const ADMIN_EMAIL = "tafartechlabs@gmail.com";
 export type AdminSession = { id: string; name: string; email: string };
 
@@ -120,11 +120,29 @@ export async function writeResource(resource: ManagedResource) {
   }
 }
 
+let memoryVisitorId: string | undefined;
 export function visitorId() {
   const key = "smb-visitor-id";
-  const saved = localStorage.getItem(key);
-  if (saved && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saved)) return saved;
-  const id = crypto.randomUUID();
-  localStorage.setItem(key, id);
-  return id;
+  try {
+    const saved = localStorage.getItem(key);
+    if (saved && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saved)) return saved;
+    const id = memoryVisitorId ??= crypto.randomUUID();
+    localStorage.setItem(key, id);
+    return id;
+  } catch {
+    // A per-page identity still captures views when browser storage is disabled.
+    return memoryVisitorId ??= crypto.randomUUID();
+  }
+}
+
+export async function recordPageView(eventId: string, path: string, postId: string | null) {
+  const { error } = await supabase().rpc("record_page_view", {
+    p_event: eventId, p_visitor: visitorId(), p_path: path, p_post_id: postId,
+  });
+  if (error) throw error;
+}
+export async function loadAnalytics(): Promise<Analytics> {
+  const { data, error } = await supabase().rpc("admin_analytics");
+  if (error) throw error;
+  return data as Analytics;
 }

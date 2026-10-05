@@ -143,18 +143,6 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
               {signup ? "Sign in" : "Create account"}
             </Link>
           </p>
-          <div className="demo-credentials">
-            <strong>Administrator registration</strong>
-            <span>tafartechlabs@gmail.com</span>
-            <span>One account, subject to approval</span>
-            <button type="button" onClick={() => setEmail("tafartechlabs@gmail.com")}>
-              Use administrator email
-            </button>
-          </div>
-          <p className="auth-disclosure">
-            Access requires a verified email and administrator approval.
-            Registration closes after the designated account is created.
-          </p>
         </div>
       </section>
     </main>

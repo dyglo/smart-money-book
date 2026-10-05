@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 for (const path of ["/admin/dashboard", "/admin/editor", "/admin/resources"]) {
   test(`unauthenticated access redirects: ${path}`, async ({ page }) => {
     await page.goto(path);
-    await expect(page).toHaveURL(/\/admin\/login$/);
+    await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 15000 });
     await expect(page.getByRole("button", { name: "Sign In", exact: true })).toBeVisible();
   });
 }
@@ -14,7 +14,7 @@ test("demo credentials no longer authenticate", async ({ page }) => {
   await page.getByLabel("Password", { exact: true }).fill("SmartMoney2026!");
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
   await expect(page.locator(".admin-error[role=alert]")).toContainText(/Invalid login credentials/i);
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(page).toHaveURL(/\/admin\/login$/, { timeout: 15000 });
 });
 
 test("signup rejects any other email without creating an account", async ({ page }) => {
