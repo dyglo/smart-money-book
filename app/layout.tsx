@@ -9,6 +9,7 @@ const urbanist = localFont({
 import "./globals.css";
 import { SiteChrome } from "@/components/site-chrome";
 import { WorkspaceProvider } from "@/components/workspace-provider";
+import { Analytics } from "@vercel/analytics/next";
 export const metadata: Metadata = {
   title: { default: "Smart Money Book", template: "%s | Smart Money Book" },
   description:
@@ -25,6 +26,7 @@ export default function RootLayout({
         <WorkspaceProvider>
           <SiteChrome>{children}</SiteChrome>
         </WorkspaceProvider>
+        <Analytics />
       </body>
     </html>
   );
