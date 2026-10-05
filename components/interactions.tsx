@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { visitorId } from "@/lib/backend";
 export function ShareButtons() {
   const [status, setStatus] = useState("");
   return (
@@ -45,49 +47,53 @@ export function ShareButtons() {
     </div>
   );
 }
-export function Comments() {
-  const [posted, setPosted] = useState<{ name: string; text: string }[]>([]);
+export function Comments({ postId }: { postId: string }) {
+  const [posted, setPosted] = useState<{ id: string; name: string; text: string }[]>([]);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let active = true;
+    setPosted([]);
+    supabase().from("comments").select("id,name,text").eq("post_id", postId).order("created_at").then(({ data, error }) => {
+      if (!active) return;
+      if (error) setError(error.message);
+      else setPosted(data ?? []);
+    });
+    return () => { active = false; };
+  }, [postId]);
   return (
     <section className="comments">
       <h2>Discussion</h2>
-      <div className="comment">
-        <strong>Alex · Sample comment</strong>
-        <p>
-          The step-by-step checklist makes it easier to keep my chart studies
-          consistent.
-        </p>
-      </div>
-      {posted.map((c, i) => (
-        <div className="comment" key={i}>
-          <strong>{c.name} · Preview comment</strong>
+      {posted.map(c => (
+        <div className="comment" key={c.id}>
+          <strong>{c.name}</strong>
           <p>{c.text}</p>
         </div>
       ))}
       <h2>Leave a Reply</h2>
-      <p className="muted">
-        Preview discussion: replies stay on this page until you refresh. Nothing
-        is submitted to a server.
-      </p>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          const form = e.currentTarget;
-          const data = new FormData(form);
-          setPosted([
-            ...posted,
-            {
-              name: String(data.get("name")).trim(),
-              text: String(data.get("comment")).trim(),
-            },
-          ]);
+      <p className="muted">Share your study notes and questions with other readers.</p>
+      <form onSubmit={async e => {
+        e.preventDefault();
+        const form = e.currentTarget;
+        const data = new FormData(form);
+        setBusy(true);
+        setError("");
+        try {
+          const { error } = await supabase().rpc("add_comment", { p_post_id: postId, p_name: String(data.get("name")).trim(), p_text: String(data.get("comment")).trim(), p_visitor: visitorId() });
+          if (error) throw error;
+          const result = await supabase().from("comments").select("id,name,text").eq("post_id", postId).order("created_at");
+          if (result.error) throw result.error;
+          setPosted(result.data ?? []);
           form.reset();
-        }}
-      >
+        } catch(e) { setError(e instanceof Error ? e.message : "Unable to post your comment."); }
+        finally { setBusy(false); }
+      }}>
         <label htmlFor="comment">Comment *</label>
-        <textarea id="comment" name="comment" required minLength={3} rows={5} />
+        <textarea id="comment" name="comment" required minLength={3} maxLength={5000} rows={5} />
         <label htmlFor="name">Name *</label>
         <input id="name" name="name" required pattern=".*\S.*" maxLength={80} />
-        <button className="button">Post Preview Comment</button>
+        {error && <p role="alert" className="admin-error">{error}</p>}
+        <button className="button" disabled={busy}>{busy ? "Posting…" : "Post Comment"}</button>
       </form>
     </section>
   );

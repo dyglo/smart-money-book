@@ -75,7 +75,7 @@ export function Library({
             </div>
             <div className="resource-card-content">
               <span className="category-label">
-                {r.category} · {r.file ? "PDF" : "Sample PDF"}
+                {r.category} · PDF
               </span>
               <h2>{r.title}</h2>
               <p>{r.description}</p>
@@ -114,8 +114,7 @@ export function Library({
         </div>
       )}
       <p className="mock-note">
-        PDFs in this first edition are downloadable samples. Published books and
-        resources will be added to this library.
+        Published books and PDF resources are available in this library.
       </p>
     </>
   );

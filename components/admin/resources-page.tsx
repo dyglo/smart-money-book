@@ -95,8 +95,8 @@ export function ResourcesPage() {
                 await saveResource(next);
                 setStatus(
                   editing
-                    ? "Resource updated on this device."
-                    : "PDF added to this browser’s resource library.",
+                    ? "Resource updated."
+                    : "PDF added to the resource library.",
                 );
                 reset();
               } catch (e) {
@@ -192,7 +192,7 @@ export function ResourcesPage() {
           <div className="admin-card-heading">
             <div>
               <h2>Your PDF library</h2>
-              <p>Published resources appear on this device’s website.</p>
+              <p>Published resources appear on the website.</p>
             </div>
           </div>
           <label className="admin-search">
@@ -287,7 +287,7 @@ export function ResourcesPage() {
           onClose={() => setPending(null)}
         >
           <p>
-            The resource and its file will be removed from this device’s
+            The resource and its file will be removed from the
             library.
           </p>
           <div className="modal-actions">

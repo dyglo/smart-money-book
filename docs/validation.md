@@ -1,25 +1,15 @@
-# Validation
+# Backend validation — October 5, 2026
 
-Validated in the cloud workspace on October 4, 2026.
+- Production build and TypeScript pass.
+- Supabase security and performance advisors return no findings.
+- Live database transaction tests pass: restricted email, atomic single signup, permanent lock after deletion, approval, immediate revocation, public/draft visibility, post/resource CRUD, persistent comments, and daily visit deduplication.
+- Storage transaction tests pass: approved-admin file writes, public published-file reads, hidden PDFs and draft-image isolation, denial after unpublishing, and blocked anonymous uploads.
+- Desktop and mobile browser suite: **16 passed, 2 skipped**. Verified navigation/layout, unknown tutorial 404, admin redirects, rejected demo credentials, disallowed signup email, shared published database content, and comments surviving refresh and appearing in independent browser contexts.
+- Both skipped cases require the owner-created, verified, approved admin account. Actual successful email delivery/sign-in with that account and full admin browser publishing/upload flows remain to be exercised after registration. Database authorization and CRUD were verified using rolled-back Auth fixtures without consuming the one-time account slot.
+- Agent-browser checked the rendered homepage, login, and a temporary live tutorial; no browser page errors were reported.
+- All temporary content and transaction-created accounts/files were removed or rolled back. The admin slot remains unclaimed, and the live library contains no seeded sample content.
+- Local Supabase public environment variables and Vercel production/preview/development environment variables are configured. Production deployment is triggered by pushing the validated changes to main.
 
-- Next.js 16.3.8 production build: passed; all application routes generated successfully.
-- TypeScript check: passed.
-- Playwright production-browser suite: 8 passed, using Chromium with 1440 × 1050 desktop and 390 × 844 phone viewports.
-- Browser checks: article rendering, contents anchors, expandable FAQs, preview comments and refresh behavior, resource search, category filtering, empty state/reset, downloaded PDF filename, all seven PDF responses, all navigation routes, header search, phone menu, unknown tutorial 404, and horizontal overflow.
-- Desktop and phone article screenshots inspected alongside the reference screenshots.
+Tests are in `tests/` and `supabase/tests/`. Use `SMB_TEST_PUBLIC_SLUG` for a temporary published browser fixture and `SMB_TEST_ADMIN_PASSWORD` after the real administrator has been onboarded. SQL tests must be run only before the signup slot is claimed; they roll back all database changes. Storage tests verify metadata authorization, not the binary Storage upload service.
 
-## Intentional boundaries
-
-The reference's layout, colors, spacing, typography hierarchy, and content presentation are adapted to Smart Money Book. Branding, example writing, diagrams, and resource cards are original mock material. The reference's third-party advertisements, trackers, author identities, and book assets are not included. System fonts are used; no licensed Proxima Nova font file was supplied.
-
-PDFs are one-page mock study resources. Comment previews exist only in component state. There is no backend, admin management, authentication, or persistent content submission. The project has been saved to GitHub; the public website is hosted at https://smart-money-book.vercel.app.
-
-## Home page redesign
-
-Production build and TypeScript passed. Eight browser tests passed after adding home-page checks for tutorial navigation, checklist search, toolkit downloads, shared palette, and Urbanist font loading. Overflow checked at widths 360, 768, 1024, and 1440. Desktop and phone screenshots inspected; browser reported no errors or framework overlay.
-
-## Admin workspace
-
-Production build, TypeScript, and all 18 browser tests passed for the completed admin release. Desktop and phone verification covers mock login/signup, protected-route redirects, sidebar collapse and drawer navigation, rich text formatting, headings, tables, inline/cover images, undo/redo, draft persistence, Blog/Tutorial publication, public previews, editing, unpublishing, unsaved navigation, PDF text/image import, scanned-page notices, clipboard image paste, resource upload/download/hide/show/delete, and existing public-site behavior. Admin layouts fit 360, 768, 1024, and 1440 pixel widths. Login, dashboard, and editor screenshots were inspected.
-
-Visitor and per-post view figures remain sample analytics. Accounts and publishing are device-local mock behavior; see `docs/admin-workspace.md` for the backend boundary and PDF conversion limits.
+See `docs/admin-workspace.md` for owner approval, Auth URL configuration, file URL lifetime, PDF import limits, and metric definitions.

@@ -1,28 +1,13 @@
+import { TutorialPost } from "@/components/published-post";
 import { notFound } from "next/navigation";
-import { articles } from "@/lib/content";
-import { SeedPost } from "@/components/published-post";
-export function generateStaticParams() {
-  return articles.map((a) => ({ slug: a.slug }));
-}
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+import { publicTutorial } from "@/lib/public-content";
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const a = articles.find((a) => a.slug === slug);
-  return {
-    title: a?.title ?? "Tutorial not found",
-    description: a?.description,
-  };
+  const post = await publicTutorial(slug);
+  return { title: post?.title ?? "Tutorial not found", description: post?.description };
 }
-export default async function Tutorial({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function Tutorial({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const a = articles.find((a) => a.slug === slug);
-  if (!a) notFound();
-  return <SeedPost article={a} />;
+  if (!await publicTutorial(slug)) notFound();
+  return <TutorialPost slug={slug} />;
 }

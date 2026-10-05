@@ -27,7 +27,7 @@ export function AdminShell({
   children: React.ReactNode;
   title: string;
 }) {
-  const { session, setSession, ready, error } = useWorkspace();
+  const { session, signOut, ready, error } = useWorkspace();
   const router = useRouter();
   const path = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -107,9 +107,9 @@ export function AdminShell({
           <button
             title="Sign out"
             aria-label="Sign out"
-            onClick={() => {
-              setSession(null);
-              router.replace("/admin/login");
+            onClick={async () => {
+              try { await signOut(); router.replace("/admin/login"); }
+              catch (e) { window.alert(e instanceof Error ? e.message : "Unable to sign out."); }
             }}
           >
             <LogOut size={20} />
@@ -119,7 +119,7 @@ export function AdminShell({
             <span>{session.name[0].toUpperCase()}</span>
             <div>
               <strong>{session.name}</strong>
-              <small>Demo administrator</small>
+              <small>Administrator</small>
             </div>
           </div>
         </div>
@@ -138,11 +138,11 @@ export function AdminShell({
               Workspace <span>/</span> <strong>{title}</strong>
             </span>
           </div>
-          <span className="demo-badge">Demo workspace</span>
+          <span className="demo-badge">Admin workspace</span>
         </header>
         <div className="admin-device-note">
-          <span>Changes stay in this browser.</span>
-          <span>Connect a backend later to publish to everyone.</span>
+          <span>Content is saved to your library.</span>
+          <span>Published content is available to everyone.</span>
         </div>
         {error && (
           <p role="alert" className="admin-error">

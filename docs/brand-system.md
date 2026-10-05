@@ -23,7 +23,7 @@ Yellow controls use charcoal text. Reading links use a darker yellow-derived col
 
 ## Home page
 
-A chart-led introduction, topic shortcuts, a three-step learning path, latest strategy notes, downloadable study tools, and a closing link to the blog. All actions connect to existing tutorial/library routes or sample PDFs. Chart visuals are illustrative learning diagrams, not quotes, signals, or live trading data.
+A chart-led introduction, topic shortcuts, a three-step learning path, latest strategy notes, downloadable study tools, and a closing link to the blog. All actions connect to live tutorial/library routes and published PDFs. Chart visuals are illustrative learning diagrams, not quotes, signals, or live trading data.
 
 ## Deployment
 

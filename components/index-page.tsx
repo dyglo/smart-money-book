@@ -17,7 +17,7 @@ export function IndexPage({
     (p) =>
       p.status === "published" &&
       (marketOnly
-        ? p.seedSlug === "fair-value-gap"
+        ? p.kind === "tutorial" && /structure|fair value gap|displacement|imbalance/i.test(`${p.title} ${p.description}`)
         : title === "Trading Strategy Blog"
           ? p.kind === "blog"
           : p.kind === "tutorial"),

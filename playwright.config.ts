@@ -4,10 +4,7 @@ export default defineConfig({
   fullyParallel: true,
   use: {
     baseURL: "http://localhost:3000",
-    launchOptions: {
-      executablePath: "/usr/bin/chromium",
-      args: ["--no-sandbox"],
-    },
+
   },
   projects: [
     { name: "desktop", use: { viewport: { width: 1440, height: 1050 } } },

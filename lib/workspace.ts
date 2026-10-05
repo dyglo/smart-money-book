@@ -1,4 +1,3 @@
-import { articles, resources } from "./content";
 export type PostKind = "blog" | "tutorial";
 export type ManagedPost = {
   id: string;
@@ -10,8 +9,7 @@ export type ManagedPost = {
   status: "draft" | "published";
   updatedAt: string;
   views: number;
-  seedSlug?: string;
-  customized?: boolean;
+  slug?: string;
   kindConfirmed?: boolean;
 };
 export type ManagedResource = {
@@ -22,58 +20,17 @@ export type ManagedResource = {
   category: string;
   filename: string;
   url?: string;
+  storagePath?: string;
   file?: Blob;
   size: number;
   published: boolean;
   updatedAt: string;
 };
 export type Workspace = { posts: ManagedPost[]; resources: ManagedResource[] };
-export const DEMO_EMAIL = "admin@smartmoneybook.demo";
-export const DEMO_PASSWORD = "SmartMoney2026!";
-export const escapeHTML = (s: string) =>
-  s.replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ]!,
-  );
-export function seedWorkspace(): Workspace {
-  return {
-    posts: articles.map((a, i) => ({
-      id: a.slug,
-      title: a.title,
-      description: a.description,
-      kind: "tutorial",
-      html: a.sections
-        .map(
-          (s) =>
-            `<h2>${escapeHTML(s.title)}</h2>${s.paragraphs.map((p) => `<p>${escapeHTML(p)}</p>`).join("")}${s.points ? `<ol>${s.points.map((p) => `<li>${escapeHTML(p)}</li>`).join("")}</ol>` : ""}`,
-        )
-        .join(""),
-      cover: "",
-      status: "published",
-      updatedAt: "2026-10-04T00:00:00Z",
-      views: [1240, 856, 632][i],
-      seedSlug: a.slug,
-    })),
-    resources: resources.map((r) => ({
-      id: r.slug,
-      slug: r.slug,
-      title: r.title,
-      description: r.description,
-      category: r.category,
-      filename: r.slug + ".pdf",
-      url: `/pdfs/${r.slug}.pdf`,
-      size: 0,
-      published: true,
-      updatedAt: "2026-10-04T00:00:00Z",
-    })),
-  };
-}
+export const escapeHTML = (value: string) => value.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 export function postURL(post: ManagedPost) {
-  return post.seedSlug && !post.customized
-    ? `/tutorials/${post.seedSlug}`
+  return post.kind === "tutorial" && post.status === "published"
+    ? `/tutorials/${encodeURIComponent(post.slug || post.id)}`
     : `/read?id=${encodeURIComponent(post.id)}`;
 }
 export const blankPost = (): ManagedPost => ({

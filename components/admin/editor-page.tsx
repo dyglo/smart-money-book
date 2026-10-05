@@ -122,16 +122,16 @@ function EditorWorkspace() {
           : toDraft
             ? ("draft" as const)
             : post.status,
-        customized: true,
         updatedAt: new Date().toISOString(),
       };
-      await savePost(next);
-      setPost(next);
+      const saved = await savePost(next);
+      editor.current?.commands.setContent(saved.html, { emitUpdate: false });
+      setPost(saved);
       setDirty(false);
       setStatus(
         publish
-          ? "Published to this browser’s website preview."
-          : "Saved on this device.",
+          ? "Published to the website."
+          : "Saved to the library.",
       );
       setPublishing(false);
       window.history.replaceState(null, "", `/admin/editor?id=${next.id}`);
@@ -389,8 +389,8 @@ function EditorWorkspace() {
           onClose={() => setPublishing(false)}
         >
           <p>
-            Choose where readers will find it. Publishing creates a preview on
-            this device.
+            Choose where readers will find it. Publishing makes this lesson
+            available on the website.
           </p>
           <fieldset className="publish-kind">
             <legend>Publish as *</legend>
@@ -427,7 +427,7 @@ function EditorWorkspace() {
               disabled={busy}
               onClick={() => void save(true)}
             >
-              {busy ? "Publishing…" : "Publish to Preview"}
+              {busy ? "Publishing…" : "Publish to Website"}
             </button>
           </div>
         </Modal>

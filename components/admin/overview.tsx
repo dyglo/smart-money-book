@@ -17,7 +17,7 @@ import { postURL } from "@/lib/workspace";
 import { AdminShell } from "./shell";
 import { Modal } from "./modal";
 export function Overview() {
-  const { data, session, deletePost } = useWorkspace();
+  const { data, session, deletePost, analytics } = useWorkspace();
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
@@ -56,14 +56,14 @@ export function Overview() {
           },
           {
             label: "Visitors",
-            value: "1,284",
-            detail: "Sample data · last 7 days",
+            value: analytics.visitors.toLocaleString(),
+            detail: "Unique browsers · last 7 days",
             icon: Users,
           },
           {
             label: "Content views",
             value: views.toLocaleString(),
-            detail: "Sample analytics",
+            detail: "Recorded content views",
             icon: Eye,
           },
         ].map((stat) => (
@@ -82,21 +82,21 @@ export function Overview() {
           <div className="admin-card-heading">
             <div>
               <h2>Visitor activity</h2>
-              <p>Sample figures for a week of reading.</p>
+              <p>Unique browsers over the last seven days.</p>
             </div>
             <span className="subtle-chip">Last 7 days</span>
           </div>
           <div
             className="visitor-chart"
             role="img"
-            aria-label="Sample visitor activity: Monday 124, Tuesday 182, Wednesday 143, Thursday 231, Friday 198, Saturday 176, Sunday 230."
+            aria-label={`Visitor activity: ${analytics.daily.map(d => `${d.day}: ${d.visitors}`).join(", ")}`}
           >
-            {[124, 182, 143, 231, 198, 176, 230].map((v, i) => (
+            {analytics.daily.map((day, i) => (
               <div key={i}>
-                <span className="visitor-value">{v}</span>
-                <div style={{ height: `${v / 2}px` }} />
+                <span className="visitor-value">{day.visitors}</span>
+                <div style={{ height: `${Math.min(180, day.visitors / Math.max(1, ...analytics.daily.map(d => d.visitors)) * 180)}px` }} />
                 <small>
-                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]}
+                  {new Date(day.day + "T12:00:00+03:00").toLocaleDateString("en-US", { weekday: "short", timeZone: "Africa/Nairobi" })}
                 </small>
               </div>
             ))}
@@ -173,7 +173,7 @@ export function Overview() {
                 <th>Type</th>
                 <th>Status</th>
                 <th>
-                  Views <small>(sample)</small>
+                  Views
                 </th>
                 <th>Updated</th>
                 <th>Actions</th>
@@ -244,7 +244,7 @@ export function Overview() {
       {pending && (
         <Modal title="Delete this post?" onClose={() => setPending(null)}>
           <p>
-            This removes it from this browser’s workspace and published
+            This removes it from the workspace and published
             previews.
           </p>
           <div className="modal-actions">

@@ -112,7 +112,7 @@ export function SetupStudy() {
           <span className="setup-number">01</span> Context before confirmation.
         </span>
         <Link
-          href="/tutorials/ict-reclaimed-order-block"
+          href="/tutorials"
           aria-label="Open reclaimed order block study"
         >
           Open study <span aria-hidden="true">↗</span>

@@ -1,66 +1,51 @@
 # Smart Money Book
 
-A Next.js web app for sharing ICT trading strategies, PDF books, tutorials, and educational resources. The first version uses mock content only.
+Next.js publishing app backed by the Supabase project **smartmoney-book** (`tikmonmvozelytbzerfq`). Posts, PDFs, images, comments, authentication, and dashboard metrics use the live backend. The library starts empty; add your own content from the existing admin dashboard.
 
-## Run on your PC or in the cloud
+## Local setup
 
-Requires Node.js 22.13 or later (Node.js 24 recommended).
+Requires Node.js 22.13 or newer.
 
 ```bash
-git clone https://github.com/dyglo/smart-money-book.git
-cd smart-money-book
 npm ci
+```
+
+Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from the project's API keys. The project URL is already specified. This workspace has `.env.local` configured. These two public variables are also configured in the connected Vercel project for production, preview, and development; the next deployment will use them. Never put a secret or service-role key in a `NEXT_PUBLIC_` variable.
+
+```bash
 npm run dev
 ```
 
-Open http://localhost:3000. For a production version, run `npm run build` followed by `npm run start`.
+Open http://localhost:3000. For production, run `npm run build` and `npm run start`.
 
-## Included
+## Administrator
 
-- A trading study home page with an annotated setup chart, learning path, tutorial cards, and PDF toolkit.
-- Urbanist typography and a yellow/charcoal design system applied throughout the site.
-- Article pages with a contents list, chart diagrams, FAQs, related lessons, and a resource sidebar.
-- Tutorial, blog, market structure, PDF book, and resource pages.
-- Resource search and category filtering, downloadable sample PDFs, and mobile navigation.
-- Browser-only preview comments. They disappear on refresh; no backend, accounts, or persistent submissions are configured.
+1. Open `/admin/sign-up` and register **tafartechlabs@gmail.com** with your own password.
+2. Verify the email sent by Supabase.
+3. The Supabase project owner approves the account using the SQL in [docs/admin-workspace.md](docs/admin-workspace.md).
+4. Sign in at `/admin/login` and publish content.
 
-Mock records are in `lib/content.ts`. Replace PDFs in `public/pdfs/` with your own files. Sample PDFs contain one page of preview material; they are not finished books. `scripts/generate-sample-pdfs.mjs` regenerates the samples.
+Registration is enforced by an `auth.users` trigger and an atomic singleton claim. Other emails cannot register. Once claimed, registration remains closed, including after account deletion. Approval lives in a private table that browser users cannot modify. Email verification and approval are required by every admin RLS policy.
 
-The current design system is documented in `docs/brand-system.md`. The original inspected reference and design measurements are documented in `docs/design-reference.md`. Smart Money Book uses its own branding, mock copy, and illustrative charts.
+## Content
 
-## Checks
+The existing editor supports rich text, tables, inline/cover images, drafts, publishing, editing, and deletion. PDF import processes up to 20 pages locally; extracted text and images are saved to Supabase when you save the document. Scanned pages require OCR for editable text. PDF resources support upload, edit, hide, publish, download, and delete.
+
+Tutorials, blog lists, the homepage, resource search, and sidebar read shared live content. Drafts and hidden resources are visible only to the approved administrator. Both storage buckets are private; published media can be downloaded through signed URLs. Comments persist in Supabase.
+
+Dashboard visitors measure distinct browser IDs over seven days in Africa/Nairobi time. Content views count a browser/post/path once per day. These are first-party visit measurements rather than audited unique people.
+
+## Database and verification
+
+Schema migrations are in `supabase/migrations/` and have been applied to the connected project. Do not reapply them to that project. `supabase/tests/backend.sql` verifies signup, approval/revocation, RLS, CRUD, comments, and analytics; `supabase/tests/storage.sql` verifies media authorization. Both run inside transactions that roll back all fixtures. Run it through Supabase SQL Editor only while the admin slot is unclaimed.
 
 ```bash
-npm run build
 npm run typecheck
+npm run build
+npx playwright install chromium
 npm test
 ```
 
-Browser tests cover desktop and phone layouts, navigation, resource searches, PDF downloads, and preview discussions. In this cloud environment they use `/usr/bin/chromium`. On another machine, update `playwright.config.ts` to remove `executablePath`, then run `npx playwright install chromium`.
+Browser tests cover desktop/mobile navigation, unauthorized access, invalid credentials, email restrictions, and live public reads. Optional fixture tests use `SMB_TEST_PUBLIC_SLUG`. The approved-admin publishing test requires `SMB_TEST_ADMIN_PASSWORD`; it is skipped until the owner has created, verified, and approved the account. Never commit this password.
 
-## Project stages
-
-Each completed stage is validated and saved to GitHub separately: Next.js foundation, article experience, resource library, and browser verification/documentation.
-
-## Disclaimer
-
-Educational content only. Trading involves risk and these resources are not financial advice. Smart Money Book is an independent project, not affiliated with ICT or the reference website.
-
-## Live site
-
-https://smart-money-book.vercel.app
-
-Vercel deploys automatically when the connected repository changes on `main`. Build and run browser checks before publishing changes.
-
-## Admin workspace (demo)
-
-Open `/admin/login` or `/login`, or create a device-local demo account at `/admin/sign-up`.
-
-- Email: `admin@smartmoneybook.demo`
-- Password: `SmartMoney2026!`
-
-The admin dashboard includes an overview, collapsible sidebar, a Word-style rich editor, PDF-to-draft import, and PDF resource management. Published previews appear in the blog/tutorial indexes and resource library in the same browser. Drafts, uploaded images, and PDFs are stored locally in IndexedDB.
-
-This is mock authentication and device-local publishing. Content does not synchronize to other visitors or devices; secure access, shared storage, and real visitor analytics require the later backend.
-
-PDF import extracts text and supported embedded images from up to 20 pages of PDFs smaller than 15 MB. Scanned PDFs become page images; OCR is not included. Review formatting and image placement before publishing. Full workflow details: `docs/admin-workspace.md`.
+The chart diagrams remain illustrative educational visuals. They do not represent live market prices.

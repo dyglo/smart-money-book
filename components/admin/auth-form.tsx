@@ -4,18 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BookOpen, ArrowUpRight, Eye, EyeOff } from "lucide-react";
 import { useWorkspace } from "../workspace-provider";
-import { DEMO_EMAIL, DEMO_PASSWORD } from "@/lib/workspace";
-async function hash(value: string) {
-  const bytes = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(value),
-  );
-  return Array.from(new Uint8Array(bytes), (b) =>
-    b.toString(16).padStart(2, "0"),
-  ).join("");
-}
 export function AuthForm({ signup = false }: { signup?: boolean }) {
-  const { setSession } = useWorkspace();
+  const { signIn, signUp } = useWorkspace();
   const router = useRouter();
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -58,10 +48,10 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
         </Link>
         <div className="auth-form-inner">
           <span className="admin-eyebrow">ADMIN WORKSPACE</span>
-          <h2>{signup ? "Create your demo account" : "Welcome back."}</h2>
+          <h2>{signup ? "Create your admin account" : "Welcome back."}</h2>
           <p>
             {signup
-              ? "Try the publishing workspace with a device-local demo account."
+              ? "Register the designated account for administrator approval."
               : "Sign in to write, organize, and manage your library."}
           </p>
           <form
@@ -73,40 +63,13 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
                 const form = new FormData(e.currentTarget);
                 const normalized = email.trim().toLowerCase();
                 if (signup) {
-                  const name = String(form.get("name")).trim();
+                  const name = String(form.get("name") ?? "").trim();
                   if (!name) throw new Error("Enter your name.");
-                  if (normalized === DEMO_EMAIL)
-                    throw new Error(
-                      "Use the demo login for this email, or choose another email.",
-                    );
-                  localStorage.setItem(
-                    "smb-demo-account",
-                    JSON.stringify({
-                      name,
-                      email: normalized,
-                      passwordHash: await hash(password),
-                    }),
-                  );
-                  setSession({ name, email: normalized });
-                } else {
-                  let name = "Admin";
-                  if (!(
-                    normalized === DEMO_EMAIL && password === DEMO_PASSWORD
-                  )) {
-                    const saved = localStorage.getItem("smb-demo-account");
-                    const account = saved ? JSON.parse(saved) : null;
-                    if (
-                      !account ||
-                      account.email !== normalized ||
-                      account.passwordHash !== (await hash(password))
-                    )
-                      throw new Error(
-                        "Email or password is incorrect. Use the demo credentials below.",
-                      );
-                    name = account.name;
-                  }
-                  setSession({ name, email: normalized });
+                  await signUp(name, normalized, password);
+                  setError("Account registered. Verify your email and wait for administrator approval, then sign in.");
+                  return;
                 }
+                await signIn(normalized, password);
                 router.push("/admin/dashboard");
               } catch (e) {
                 setError(
@@ -170,33 +133,27 @@ export function AuthForm({ signup = false }: { signup?: boolean }) {
               {busy
                 ? "Please wait…"
                 : signup
-                  ? "Create Demo Account"
+                  ? "Create Account"
                   : "Sign In"}
             </button>
           </form>
           <p className="auth-switch">
             {signup ? "Already have an account?" : "New to the workspace?"}{" "}
             <Link href={signup ? "/admin/login" : "/admin/sign-up"}>
-              {signup ? "Sign in" : "Create demo account"}
+              {signup ? "Sign in" : "Create account"}
             </Link>
           </p>
           <div className="demo-credentials">
-            <strong>Try the demo</strong>
-            <span>{DEMO_EMAIL}</span>
-            <span>{DEMO_PASSWORD}</span>
-            <button
-              type="button"
-              onClick={() => {
-                setEmail(DEMO_EMAIL);
-                setPassword(DEMO_PASSWORD);
-              }}
-            >
-              Use demo credentials
+            <strong>Administrator registration</strong>
+            <span>tafartechlabs@gmail.com</span>
+            <span>One account, subject to approval</span>
+            <button type="button" onClick={() => setEmail("tafartechlabs@gmail.com")}>
+              Use administrator email
             </button>
           </div>
           <p className="auth-disclosure">
-            Demo access only. Content is stored in this browser; this is not
-            secure production authentication.
+            Access requires a verified email and administrator approval.
+            Registration closes after the designated account is created.
           </p>
         </div>
       </section>

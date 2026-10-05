@@ -1,6 +1,11 @@
+"use client";
 import Link from "next/link";
-import { articles } from "@/lib/content";
+import { useWorkspace } from "./workspace-provider";
+import { postURL } from "@/lib/workspace";
 export function Sidebar() {
+  const { data } = useWorkspace();
+  const articles = data.posts.filter(p => p.status === "published" && p.kind === "tutorial").slice(0, 3);
+  const glossary = data.resources.find(r => r.published && r.category === "Reference");
   return (
     <aside className="sidebar" aria-label="Learning resources">
       <div className="sidebar-inner">
@@ -25,27 +30,27 @@ export function Sidebar() {
         </Link>
         <div className="glossary-widget">
           <p>The Essential</p>
-          <h2>ICT Glossary PDF</h2>
+          <h2>{glossary?.title ?? "Reference PDFs"}</h2>
           <p>
             <strong>Build your vocabulary</strong> with a collection of trading
             terms, concepts, and study notes.
           </p>
-          <a className="button" href="/pdfs/ict-glossary.pdf" download>
+          <a className="button" href={glossary?.url ?? "/resources"} download={glossary?.filename}>
             Download Free PDF
           </a>
-          <small>Sample edition · PDF</small>
+          <small>Reference library · PDF</small>
         </div>
         <div className="sidebar-section">
           <h2>Latest Tutorials</h2>
           {articles.map((a) => (
             <Link
-              key={a.slug}
-              href={`/tutorials/${a.slug}`}
+              key={a.id}
+              href={postURL(a)}
               className="latest-link"
             >
-              <span>{a.category}</span>
+              <span>ICT Tutorial</span>
               <strong>{a.title.split(" — ")[0]}</strong>
-              <small>{a.readTime}</small>
+              <small>{`${Math.max(1, Math.ceil(a.html.replace(/<[^>]*>/g, " ").split(/\s+/).length / 200))} min read`}</small>
             </Link>
           ))}
         </div>

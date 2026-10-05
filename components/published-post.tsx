@@ -6,21 +6,13 @@ import Image from "next/image";
 import { useWorkspace } from "./workspace-provider";
 import { Sidebar } from "./sidebar";
 import { ShareButtons, Comments } from "./interactions";
-import { ArticleView } from "./article";
-import type { Article } from "@/lib/content";
-export function SeedPost({ article }: { article: Article }) {
-  const { data, ready, session } = useWorkspace();
-  if (!ready)
-    return (
-      <div className="foundation" role="status">
-        Opening lesson…
-      </div>
-    );
-  const post = data.posts.find((p) => p.seedSlug === article.slug);
-  if (!post || (post.status !== "published" && !session))
-    return <MissingPost />;
-  if (post.customized) return <RichPost id={post.id} />;
-  return <ArticleView article={article} />;
+import { supabase } from "@/lib/supabase";
+import { visitorId } from "@/lib/backend";
+export function TutorialPost({ slug }: { slug: string }) {
+  const { data, ready } = useWorkspace();
+  if (!ready) return <div className="foundation" role="status">Opening lesson…</div>;
+  const post = data.posts.find(p => p.slug === slug && p.kind === "tutorial");
+  return post ? <RichPost id={post.id} /> : <MissingPost />;
 }
 export function PublishedPost() {
   const [id, setId] = useState<string | null>(null);
@@ -40,7 +32,7 @@ function MissingPost() {
     <main id="main" className="foundation">
       <h1>Post unavailable</h1>
       <p>
-        This post may be a draft or has been removed from this browser’s
+        This post may be a draft or has been removed from the website’s
         preview.
       </p>
       <Link href="/tutorials">Browse tutorials</Link>
@@ -50,6 +42,10 @@ function MissingPost() {
 function RichPost({ id }: { id: string }) {
   const { data, ready, session } = useWorkspace();
   const post = data.posts.find((p) => p.id === id);
+  useEffect(() => {
+    if (post?.status !== "published") return;
+    try { void supabase().rpc("record_visit", { p_visitor: visitorId(), p_path: location.pathname + location.search, p_post_id: id }); } catch { /* Reading works without analytics storage. */ }
+  }, [id, post?.status]);
   if (!ready)
     return (
       <div className="foundation" role="status">
@@ -62,7 +58,7 @@ function RichPost({ id }: { id: string }) {
       <article className="article-panel">
         <div className="update-callout">
           {post.status === "draft" ? "Draft preview" : "Published preview"} ·
-          Saved in this browser.{" "}
+          Saved to the library.{" "}
           {session && (
             <Link href={`/admin/editor?id=${encodeURIComponent(id)}`}>
               Edit post
@@ -103,7 +99,7 @@ function RichPost({ id }: { id: string }) {
           className="article-content rich-article"
           dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.html) }}
         />
-        <Comments />
+        <Comments postId={post.id} />
       </article>
       <Sidebar />
     </main>
